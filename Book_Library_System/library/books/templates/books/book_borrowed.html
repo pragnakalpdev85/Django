@@ -1,0 +1,76 @@
+{% extends 'books/base.html' %}
+
+{% block title %}Borrowed Books - Book Library Manager{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title mb-4">
+                    <i class="bi bi-book"></i> Borrowed books
+                </h2>
+
+                {% if books %}
+                <p class="text-muted">
+                    <i class="bi bi-info-circle"></i>
+                    Borrowed Books are kept here.
+                </p>
+
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Title</th>
+                                <th>Author</th>
+                                <th>Availibility Status</th>
+                                <th>Genre</th>
+                                <th>ISBN</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for book in books %}
+                            <tr>
+                                <td>{{ book.title }}</td>
+                                <td>{{ book.author }}</td>
+                                <td>
+                                    <span class="badge badge-priority-{{ book.is_available }}">
+                                        {% if book.is_available %}
+                                            Available
+                                        {% else %}
+                                            Borrowed
+                                        {% endif %}
+                                    </span>
+                                </td>
+                                <td>{{ book.genre }}</td>
+                                <td>{{ book.isbn }}</td>
+                                <td>
+                                    <form method="post" action="{% url 'book_toggle_available' book.pk %}"
+                                        style="display:inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-success btn-sm ms-1 me-1 rounded">
+                                            <i class="bi bi-check-circle"></i>
+                                            {% if not book.is_available %}Available{% else %}Borrowed{% endif %}
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="alert alert-info text-center">
+                    <i class="bi bi-info-circle"></i> Borrowed section is empty.
+                </div>
+                {% endif %}
+
+                <a href="{% url 'book_list' %}" class="btn btn-secondary mt-3">
+                    <i class="bi bi-arrow-left"></i> Back to Tasks
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

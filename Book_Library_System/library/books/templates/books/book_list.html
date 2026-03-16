@@ -1,0 +1,147 @@
+{% extends 'books/base.html' %}
+
+{% block title %}My Tasks - Task Manager{% endblock %}
+
+{% block content %}
+<div class="row-md-4" style="margin-bottom: 0;">
+    <div class="col-lg-12">
+        <div class="card w-100">
+            <div class="card-body">
+                <h2 class="card-title mb-4">
+                    <i class="bi bi-book"></i> All Books
+                </h2>
+
+                <!-- Search and Filter Form -->
+                <form method="GET" class="row g-3 mb-4">
+                    <div class="col-md-4">
+                        <input type="text" class="form-control" name="search_value" placeholder="Search tasks..."
+                            value="{{ search_value|default:'' }}">
+                    </div>
+                    <div class="col-md-3">
+
+                        <select name="filter" class="form-control" onchange=" this.form.submit(); ">
+                            <option value="">All Status</option>
+                            <option value="available" {% if filter_value == "available" %} selected {% endif %}>Available
+                            </option>
+                            <option value="borrowed" {% if filter_value == "borrowed" %} selected {% endif %}>Borrowed
+                            </option>
+                        </select>
+                        <input type="hidden" name="filter_default" value="{{ filter_value|default:'asc' }}">
+                    </div>
+                    <div class="col-md-3">
+                        <select name="filter_genre" class="form-control" onchange="this.form.submit();">
+                            <option value="">All Genre</option>
+                            <option value="fiction" {% if filter_column == "fiction" %} selected {% endif %}>Fiction
+                            </option>
+                            <option value="non-fiction" {% if filter_column == "non-fiction" %} selected {% endif %}>
+                                Non-Fiction</option>
+                            <option value="science" {% if filter_column == "science" %}selected {% endif %}>Science
+                            </option>
+                            <option value="history" {% if filter_column == "history" %}selected {% endif %}>History
+                            </option>
+                            <option value="biography" {% if filter_column == "biography" %}selected {% endif %}>Biography
+                            </option>
+                        </select>
+                        <input type="hidden" name="filter_genre_default" value="{{ filter_column|default:'asc' }}">
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="bi bi-search"></i> Filter
+                        </button>
+                    </div>
+                </form>
+                <div class="d-flex gap-4 m-2 rounded justify-content-start">
+                    <p style="border: 1px solid rgb(165, 165, 165); padding: 8px;" class="rounded"><strong>Total Books: </strong><span>{{ stats.total }}</span></p>
+                    <p style="border: 1px solid rgb(165, 165, 165); padding: 8px;" class="rounded"><strong>Available Books: </strong><span>{{ stats.available }}</span></p>
+                    <p style="border: 1px solid rgb(165, 165, 165); padding: 8px;" class="rounded"><strong>Borrowed Books: </strong><span>{{ stats.borrowed }}</span></p>
+                    <p style="border: 1px solid rgb(165, 165, 165); padding: 8px;" class="rounded"><strong>Fiction Books: </strong><span>{{ stats.genre.fiction }}</span></p>
+                    <p style="border: 1px solid rgb(165, 165, 165); padding: 8px;" class="rounded"><strong>Non-Fiction Books: </strong><span>{{ stats.genre.nonfiction }}</span></p>
+                    <p style="border: 1px solid rgb(165, 165, 165); padding: 8px;" class="rounded"><strong>Science Books: </strong><span>{{ stats.genre.science }}</span></p>
+                    <p style="border: 1px solid rgb(165, 165, 165); padding: 8px;" class="rounded"><strong>History Books: </strong><span>{{ stats.genre.history }}</span></p>
+                    <p style="border: 1px solid rgb(165, 165, 165); padding: 8px;" class="rounded"><strong>Biography Books: </strong><span>{{ stats.genre.biography }}</span></p>
+                </div>
+
+                <!-- Task List -->
+                {% if books %}
+                <div class="row" id="book-list">
+                    {% for book in books %}
+                    <div class="col-md-4 mb-2 cards" id="book-{{ book.id }}">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <h5 class="card-title">
+                                        {{ book.title }} <span class="fs-6 text-muted">( {{ book.author }} )</span>
+                                    </h5>
+
+                                    <div class="d-flex gap-2">
+                                        <span class="badge bg-info">{{ book.genre }}</span>
+
+                                        <span class="badge badge-priority-{{ book.is_available }}">
+                                            {% if book.is_available %}
+                                            Available
+                                            {% else %}
+                                            Borrowed
+                                            {% endif %}
+                                        </span>
+                                    </div>
+                                </div>
+                                <p class="card-text text-muted">
+                                        {{ book.description|truncatewords:20 }}
+                                </p>
+                                <div class="group d-flex justify-content-between">
+                                    <span class="card-text text-muted fs-6">
+                                        ISBN: {{ book.isbn }}
+                                    </span>
+                                    <div class="btn-group btn-group-sm " role="group">
+                                        <a href="{% url 'book_detail' book.pk %}" class="btn btn-info me-1 rounded">
+                                            <i class="bi bi-eye"></i> View
+                                        </a>
+                                        <a href="{% url 'book_update' book.pk %}" class="btn btn-warning ms-1 me-1 rounded">
+                                            <i class="bi bi-pencil"></i> Edit
+                                        </a>
+                                        <form method="post" action="{% url 'book_toggle_available' book.pk %}"
+                                            style="display:inline;">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-success btn-sm ms-1 me-1 rounded">
+                                                <i class="bi bi-check-circle"></i>
+                                                {% if not book.is_available %}Available{% else %}Borrowed{% endif %}
+                                            </button>
+                                        </form>
+                                        <a href="{% url 'book_delete' book.pk %}" class="btn btn-danger ms-1 me-1 rounded">
+                                            <i class="bi bi-trash"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <div class="alert alert-info text-center">
+                    <i class="bi bi-info-circle"></i> No Books found.
+                    <a href="{% url 'book_create' %}" class="alert-link">Add first Book!</a>
+                </div>
+                {% endif %}
+                <div class="pagination fixed-bottom d-flex bg-white m-2 mb-4 justify-content-center rounded p-1" style="border: 1px solid rgb(165, 165, 165); ">
+                    <span class="step-links">
+                        {% if page_obj.has_previous %}
+                        <a class="btn btn-primary" href="?page=1">&laquo; first</a>
+                        <a class="btn btn-primary" href="?page={{ page_obj.previous_page_number }}">previous</a>
+                        {% endif %}
+
+                        <span class="current fs-5 text-muted">
+                            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+                        </span>
+
+                        {% if page_obj.has_next %}
+                        <a class="btn btn-primary" href="?page={{ page_obj.next_page_number }}">next</a>
+                        <a class="btn btn-primary" href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

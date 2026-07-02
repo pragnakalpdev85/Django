@@ -5,7 +5,7 @@
 {% block extra_css %}
 <style>
     body {
-        background-color: #ffb6c1 !important;
+        background-color: #b6f0ff !important;
     }
 </style>
 {% endblock %}
@@ -18,7 +18,7 @@
                 <h2 class="card-title text-center mb-4">
                     <i class="bi bi-box-arrow-in-right"></i> Login
                 </h2>
-                
+
                 <form method="POST">
                     {% csrf_token %}
                     <div class="mb-3">
@@ -33,10 +33,10 @@
                         <i class="bi bi-box-arrow-in-right"></i> Login
                     </button>
                 </form>
-                
+
                 <hr>
                 <p class="text-center mb-0">
-                    Don't have an account? 
+                    Don't have an account?
                     <a href="{% url 'register' %}">Register here</a>
                 </p>
             </div>

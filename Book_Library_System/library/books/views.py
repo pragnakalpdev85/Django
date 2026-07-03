@@ -52,6 +52,22 @@ class UserLoginView(TemplateView):
             messages.error(request, 'Invalid username or password!')
             return render(request, 'books/login.html')
         
+class UserProfileView(LoginRequiredMixin, TemplateView):
+    """
+    Renders the logged-in user's profile page
+    """
+
+    template_name = 'books/user_profile.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        user = self.request.user
+        context['profile_user'] = user
+        context['total_books'] = Book.objects.filter(created_by=user).count()
+        context['available_books'] = Book.objects.filter(created_by=user, is_available=True).count()
+        context['borrowed_books'] = Book.objects.filter(created_by=user, is_available=False).count()
+        return context
+
 class UserLogoutView(View):
     """
     This view logs out user

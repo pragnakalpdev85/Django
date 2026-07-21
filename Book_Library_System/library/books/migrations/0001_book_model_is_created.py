@@ -16,24 +16,62 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Book',
+            name="Book",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=200)),
-                ('author', models.CharField(max_length=100)),
-                ('description', models.TextField(blank=True, max_length=200, null=True)),
-                ('genre', models.CharField(choices=[('fiction', 'Fiction'), ('non-fiction', 'Non-Fiction'), ('science', 'Science'), ('history', 'History'), ('biography', 'Biography')], default='fiction', max_length=20)),
-                ('is_available', models.BooleanField(default=True)),
-                ('created_at', models.DateTimeField(default=django.utils.timezone.now)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
-                ('created_by', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='books', to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("title", models.CharField(max_length=200)),
+                ("author", models.CharField(max_length=100)),
+                (
+                    "description",
+                    models.TextField(blank=True, max_length=200, null=True),
+                ),
+                (
+                    "genre",
+                    models.CharField(
+                        choices=[
+                            ("fiction", "Fiction"),
+                            ("non-fiction", "Non-Fiction"),
+                            ("science", "Science"),
+                            ("history", "History"),
+                            ("biography", "Biography"),
+                        ],
+                        default="fiction",
+                        max_length=20,
+                    ),
+                ),
+                ("is_available", models.BooleanField(default=True)),
+                ("created_at", models.DateTimeField(default=django.utils.timezone.now)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
+                (
+                    "created_by",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="books",
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Book',
-                'verbose_name_plural': 'Books',
-                'db_table': 'books',
-                'ordering': ['-created_at'],
-                'indexes': [models.Index(fields=['created_by'], name='books_created_2fafad_idx'), models.Index(fields=['genre', 'is_available'], name='books_genre_e0119e_idx')],
+                "verbose_name": "Book",
+                "verbose_name_plural": "Books",
+                "db_table": "books",
+                "ordering": ["-created_at"],
+                "indexes": [
+                    models.Index(
+                        fields=["created_by"], name="books_created_2fafad_idx"
+                    ),
+                    models.Index(
+                        fields=["genre", "is_available"], name="books_genre_e0119e_idx"
+                    ),
+                ],
             },
         ),
     ]

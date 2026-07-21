@@ -6,13 +6,15 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('books', '0001_book_model_is_created'),
+        ("books", "0001_book_model_is_created"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='book',
-            name='is_available',
-            field=models.BooleanField(choices=[(True, 'Available'), (False, 'Borrowed')], default=True),
+            model_name="book",
+            name="is_available",
+            field=models.BooleanField(
+                choices=[(True, "Available"), (False, "Borrowed")], default=True
+            ),
         ),
     ]

@@ -6,13 +6,13 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('books', '0002_added_choices_for_availablility_status'),
+        ("books", "0002_added_choices_for_availablility_status"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='book',
-            name='isbn',
+            model_name="book",
+            name="isbn",
             field=models.IntegerField(default=22345),
             preserve_default=False,
         ),

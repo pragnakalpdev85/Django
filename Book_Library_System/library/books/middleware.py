@@ -2,7 +2,7 @@ import logging
 from django.shortcuts import render
 from django.http import Http404
 
-logger = logging.getLogger('books')
+logger = logging.getLogger("books")
 
 
 class GlobalExceptionHandlerMiddleware:
@@ -42,9 +42,9 @@ class GlobalExceptionHandlerMiddleware:
         # Return a generic message to the user.
         return render(
             request,
-            'books/error.html',
+            "books/error.html",
             {
-                'message': (
+                "message": (
                     "Something went wrong while processing your request. "
                     "Please try again later or contact support if the problem persists."
                 )

@@ -1,3 +1,5 @@
+import logging
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
@@ -12,6 +14,8 @@ from django.db.models import Q
 from .models import Book
 from .forms import BookForm, UserRegisterForm
 from .mixins import UserIsOwnerMixin, UserBookMixin, SuccessMessageMixin, BookStatMixin
+
+logger = logging.getLogger('books')
 
 class UserRegisterView(CreateView):
     """
@@ -28,6 +32,7 @@ class UserRegisterView(CreateView):
         response = super().form_valid(form)
         username = form.cleaned_data.get('username')
         messages.success(self.request, f'Account created for {username}!')
+        logger.info("New user registered: %s", username)
         return response
 
 class UserLoginView(TemplateView):
@@ -42,14 +47,16 @@ class UserLoginView(TemplateView):
     def post(self, request):
         username = request.POST.get('username')
         password = request.POST.get('password')
-        
+
         user = authenticate(request, username=username, password=password)
         if user:
             login(request, user)
             messages.success(request, 'Login successful!')
+            logger.info("User logged in: %s", username)
             return redirect('book_list')
         else:
             messages.error(request, 'Invalid username or password!')
+            logger.warning("Failed login attempt for username: %s", username)
             return render(request, 'books/login.html')
         
 class UserProfileView(LoginRequiredMixin, TemplateView):
@@ -62,6 +69,7 @@ class UserProfileView(LoginRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
+        logger.info("User profile viewed: %s", user.username)
         context['profile_user'] = user
         context['total_books'] = Book.objects.filter(created_by=user).count()
         context['available_books'] = Book.objects.filter(created_by=user, is_available=True).count()
@@ -74,6 +82,8 @@ class UserLogoutView(View):
     """
     
     def get(self, request):
+        if request.user.is_authenticated:
+            logger.info("User logged out: %s", request.user.username)
         logout(request)
         messages.info(request, 'You have been logged out.')
         return redirect('book_list')
@@ -92,25 +102,30 @@ class BookListView(LoginRequiredMixin, BookStatMixin, UserBookMixin, ListView):
     
     def get_queryset(self):
         queryset = super().get_queryset()
-        
+        user = self.request.user
+
         # Search functionality for searching by title and author
         search = self.request.GET.get('search_value')
         if search:
             queryset = queryset.filter(
                 Q(title__icontains=search) | Q(author__icontains=search)
             )
-        
+            logger.info("User %s searched books with query: %s", user.username, search)
+
         # Filter by available status
         status = self.request.GET.get('filter')
         if status:
             status = True if status == 'available' else False
-            queryset = queryset.filter(is_available = status)
-        
+            queryset = queryset.filter(is_available=status)
+            logger.info("User %s filtered books by status: %s", user.username, status)
+
         # Filter by genre
         genre = self.request.GET.get('filter_genre')
         if genre:
-            queryset = queryset.filter(genre = genre)
-        
+            queryset = queryset.filter(genre=genre)
+            logger.info("User %s filtered books by genre: %s", user.username, genre)
+
+        logger.info("User %s retrieved %d book(s) from the list", user.username, queryset.count())
         return queryset
     
 class BorrowedBooksView(LoginRequiredMixin, BookStatMixin, UserBookMixin, ListView):
@@ -162,8 +177,14 @@ class BookCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     
     def form_valid(self, form):
         form.instance.created_by = self.request.user
-        return super().form_valid(form)
-    
+        response = super().form_valid(form)
+        logger.info(
+            "User %s created a new book: %s",
+            self.request.user.username,
+            form.instance.title,
+        )
+        return response
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['action'] = 'Create'
@@ -183,18 +204,38 @@ class BookUpdateView(LoginRequiredMixin, UserBookMixin, UserIsOwnerMixin, Succes
         context = super().get_context_data(**kwargs)
         context['action'] = 'Update'
         return context
-    
-    def get_success_message(self):      
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        logger.info(
+            "User %s updated book '%s' (id: %s)",
+            self.request.user.username,
+            self.object.title,
+            self.object.pk,
+        )
+        return response
+
+    def get_success_message(self):
         return f'{self.object.__class__.__name__} updated successfully!'
 
 class BookDeleteView(LoginRequiredMixin, UserBookMixin, UserIsOwnerMixin, DeleteView):
     """
-    This view Renders delete confirmation template and deletes book 
+    This view Renders delete confirmation template and deletes book
     """
-    
+
     model = Book
     template_name = 'books/book_confirm_delete.html'
     success_url = reverse_lazy('book_list')
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        logger.info(
+            "User %s deleted book '%s' (id: %s)",
+            request.user.username,
+            self.object.title,
+            self.object.pk,
+        )
+        return super().delete(request, *args, **kwargs)
 
 class BookToggleBorrowesView(LoginRequiredMixin, UserBookMixin, View):
     """
@@ -203,9 +244,17 @@ class BookToggleBorrowesView(LoginRequiredMixin, UserBookMixin, View):
     
     def post(self, request, pk):
         book = get_object_or_404(Book, pk=pk, created_by=request.user)
-        
+
         book.is_available = not book.is_available
         book.save()
-        
-        messages.success(request, f"Book marked as {'Available' if book.is_available else 'Borrowed'}.")
+
+        status = 'Available' if book.is_available else 'Borrowed'
+        messages.success(request, f"Book marked as {status}.")
+        logger.info(
+            "User %s toggled book '%s' (id: %s) availability to: %s",
+            request.user.username,
+            book.title,
+            book.pk,
+            status,
+        )
         return redirect('book_list')

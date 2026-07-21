@@ -18,7 +18,7 @@ class UserIsOwnerMixin:
     def get_object(self, queryset=None):
         obj = super().get_object(queryset)
         if obj.created_by != self.request.user:
-            raise Http404("You don't have permission to access this task.")
+            raise Http404("You don't have permission to access this book.")
         return obj
 
 

@@ -40,7 +40,7 @@ def book(user):
         created_by=user,
     )
 
-
+@pytestmark
 class TestBookModel:
     """Test the Book model's behaviour and methods."""
 
@@ -73,7 +73,7 @@ class TestBookModel:
         assert books[0] == second
         assert books[1] == first
 
-
+@pytestmark
 class TestBookForm:
     """Test the BookForm validation."""
 
@@ -106,7 +106,7 @@ class TestBookForm:
         assert 'author' in form.errors
         assert 'isbn' in form.errors
 
-
+@pytestmark
 class TestUserRegisterForm:
     """Test the user registration form."""
 
@@ -129,7 +129,7 @@ class TestUserRegisterForm:
         assert not form.is_valid()
         assert 'password2' in form.errors
 
-
+@pytestmark
 class TestUserRegisterView:
     """Test the user registration view."""
 
@@ -153,7 +153,7 @@ class TestUserRegisterView:
         assert response.status_code == 200
         assert not User.objects.filter(username='createduser').exists()
 
-
+@pytestmark
 class TestUserLoginView:
     """Test the login view."""
 
@@ -174,7 +174,7 @@ class TestUserLoginView:
         content = response.content.decode()
         assert 'Invalid username or password' in content
 
-
+@pytestmark
 class TestUserLogoutView:
     """Test the logout view."""
 
@@ -182,7 +182,7 @@ class TestUserLogoutView:
         response = authenticated_client.get(reverse('logout'), follow=False)
         assert response.status_code == 302
 
-
+@pytestmark
 class TestUserProfileView:
     """Test the user profile view."""
 
@@ -201,7 +201,7 @@ class TestUserProfileView:
         assert response.context['available_books'] == 1
         assert response.context['borrowed_books'] == 1
 
-
+@pytestmark
 class TestBookListView:
     """Test the book list view."""
 
@@ -243,7 +243,7 @@ class TestBookListView:
         assert history in books
         assert science not in books
 
-
+@pytestmark
 class TestBorrowedBooksView:
     """Test the borrowed books view."""
 
@@ -260,7 +260,7 @@ class TestBorrowedBooksView:
         response = client.get(reverse('book_borrowed'), follow=False)
         assert response.status_code == 302
 
-
+@pytestmark
 class TestBookDetailView:
     """Test the book detail view."""
 
@@ -280,7 +280,7 @@ class TestBookDetailView:
         response = client.get(reverse('book_detail', kwargs={'pk': book.pk}), follow=False)
         assert response.status_code == 302
 
-
+@pytestmark
 class TestBookCreateView:
     """Test the book create view."""
 
@@ -311,7 +311,7 @@ class TestBookCreateView:
         response = client.get(reverse('book_create'), follow=False)
         assert response.status_code == 302
 
-
+@pytestmark
 class TestBookUpdateView:
     """Test the book update view."""
 
@@ -336,7 +336,7 @@ class TestBookUpdateView:
         response = authenticated_client.get(reverse('book_update', kwargs={'pk': book.pk}))
         assert response.status_code == 404
 
-
+@pytestmark
 class TestBookDeleteView:
     """Test the book delete view."""
 
@@ -351,7 +351,7 @@ class TestBookDeleteView:
         response = authenticated_client.get(reverse('book_delete', kwargs={'pk': book.pk}))
         assert response.status_code == 404
 
-
+@pytestmark
 class TestBookToggleBorrowedView:
     """Test the book availability toggle view."""
 

@@ -4,6 +4,17 @@ on:
   push:
     branches: [ main ]
 
+env:
+  SECRET_KEY: ${{ vars.SECRET_KEY }}
+  DEBUG: ${{ vars.DEBUG }}
+  ALLOWED_HOSTS: ${{ vars.ALLOWED_HOSTS }}
+
+  DB_NAME: ${{ vars.DB_NAME }}
+  DB_USER: ${{ vars.DB_USER }}
+  DB_PASSWORD: ${{ vars.DB_PASSWORD }}
+  DB_PORT: ${{ vars.DB_PORT }}
+  DB_HOST: ${{ vars.DB_HOST }}
+
 jobs:
   lint:
     runs-on: ubuntu-latest

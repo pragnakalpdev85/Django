@@ -43,7 +43,6 @@ jobs:
     - name: Install Dependencies
       run: |
         python -m pip install --upgrade pip
-        cd Book_Library_System/
         pip install -r requirement.txt
 
     - name: Run migrations
@@ -59,7 +58,7 @@ jobs:
         DB_PORT: 5432
 
       run: |
-        cd Book_Library_System/library/    
+        cd Book_Library_System/library  
         python manage.py migrate
 
     - name: Run Tests

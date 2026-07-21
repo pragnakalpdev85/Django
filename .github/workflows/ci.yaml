@@ -38,6 +38,37 @@ jobs:
       - name: Run Pylint
         run: pylint **/*.py --exit-zero
 
+  security:
+    name: Security Scanning
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set Up Python
+      uses: actions/setup-python@v6 
+      with:
+        python-version: '3.11'
+    
+    - name: Install dependencies
+      run: |
+        pip install safety bandit
+        pip install -r requirements.txt
+    
+    - name: Check for security vulnerabilities
+      run: safety check --json
+    
+    - name: Run Bandit security scan
+      run: bandit -r . -f json -o bandit-report.json
+    
+    - name: Upload security reports
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: security-reports
+        path: bandit-report.json
+
   test:
     runs-on: ubuntu-latest
     environment: test

@@ -1,0 +1,81 @@
+name: CI pipeline
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+  
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v5
+
+      - name: Set Up Python
+        uses: actions/setup-python@v6 
+        with:
+          python-version: '3.11'
+
+      - name: Installing dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          pip install pylint
+      
+      - name: Run Pylint
+        run: pylint **/*.py --exit-zero
+
+  test:
+    runs-on: ubuntu-latest
+    needs: [lint]
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: ${{ secret.DB_PASSWORD }}
+          POSTGRES_USER: ${{ secret.DB_USER }}
+          POSTGRES_DB: ${{ secret.DB_NAME }}
+        ports:
+          - ${{ secret.DB_PORT }}:${{ secret.DB_PORT }}
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+
+    - name: Checkout repository
+      uses: actions/checkout@v5
+    
+    - name: Set Up Python
+      uses: actions/setup-python@v6 
+      with:
+        python-version: '3.11'
+
+    - name: Installing dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Run migrations
+      env:
+        SECRET_KEY: ${{ secret.SECRET_KEY }}
+        DEBUG: ${{ secret.DEBUG }}
+        ALLOWED_HOSTS: ${{ secret.ALLOWED_HOSTS }}
+  
+        DB_NAME: ${{ secret.DB_NAME }} 
+        DB_USER: ${{ secret.DB_USER }}
+        DB_PASSWORD: ${{ secret.DB_PASSWORD }}
+        DB_HOST: ${{ secret.DB_HOST }}
+        DB_PORT: ${{ secret.DB_PORT }}
+
+      run: |
+        cd Book_Library_System/library  
+        python manage.py migrate
+
+    - name: Run Tests
+      run: |
+        cd Book_Library_System/library/
+        pytest

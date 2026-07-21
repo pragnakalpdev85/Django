@@ -30,7 +30,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     environment: test
-    needs: [lint]
+    needs: [ lint ]
 
     services:
       postgres:

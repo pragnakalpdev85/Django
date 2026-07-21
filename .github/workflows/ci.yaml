@@ -36,9 +36,9 @@ jobs:
       postgres:
         image: postgres:15
         env:
-          POSTGRES_PASSWORD: ${{ env.DB_PASSWORD }}
-          POSTGRES_USER: ${{ env.DB_USER }}
-          POSTGRES_DB: ${{ env.DB_NAME }}
+          POSTGRES_PASSWORD: ${{ vars.DB_PASSWORD }}
+          POSTGRES_USER: ${{ vars.DB_USER }}
+          POSTGRES_DB: ${{ vars.DB_NAME }}
         ports:
           - 5432:5432
         options: >-
@@ -65,13 +65,13 @@ jobs:
     - name: Run migrations
       env:
         SECRET_KEY: ${{ secrets.SECRET_KEY }}
-        DEBUG: ${{ env.DEBUG }}
-        ALLOWED_HOSTS: ${{ env.ALLOWED_HOSTS }}
+        DEBUG: ${{ vars.DEBUG }}
+        ALLOWED_HOSTS: ${{ vars.ALLOWED_HOSTS }}
   
-        DB_NAME: ${{ env.DB_NAME }} 
-        DB_USER: ${{ env.DB_USER }}
-        DB_PASSWORD: ${{ env.DB_PASSWORD }}
-        DB_HOST: ${{ env.DB_HOST }}
+        DB_NAME: ${{ vars.DB_NAME }} 
+        DB_USER: ${{ vars.DB_USER }}
+        DB_PASSWORD: ${{ vars.DB_PASSWORD }}
+        DB_HOST: ${{ vars.DB_HOST }}
         DB_PORT: 5432
 
       run: |

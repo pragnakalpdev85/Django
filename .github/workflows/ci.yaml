@@ -64,7 +64,7 @@ jobs:
 
     - name: Run migrations
       env:
-        SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        SECRET_KEY: ${{ vars.SECRET_KEY }}
         DEBUG: ${{ vars.DEBUG }}
         ALLOWED_HOSTS: ${{ vars.ALLOWED_HOSTS }}
   

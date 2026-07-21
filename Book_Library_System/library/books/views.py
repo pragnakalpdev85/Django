@@ -1,24 +1,18 @@
 import logging
 
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login, logout, authenticate
 from django.contrib import messages
-from django.views.generic import (
-    ListView,
-    DetailView,
-    CreateView,
-    UpdateView,
-    DeleteView,
-    TemplateView,
-    View,
-)
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.urls import reverse_lazy
 from django.db.models import Q
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse_lazy
+from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
+                                  TemplateView, UpdateView, View)
 
-from .models import Book
 from .forms import BookForm, UserRegisterForm
-from .mixins import UserIsOwnerMixin, UserBookMixin, SuccessMessageMixin, BookStatMixin
+from .mixins import (BookStatMixin, SuccessMessageMixin, UserBookMixin,
+                     UserIsOwnerMixin)
+from .models import Book
 
 logger = logging.getLogger("books")
 

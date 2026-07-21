@@ -1,9 +1,9 @@
 import pytest
-from django.urls import reverse
 from django.contrib.auth.models import User
+from django.urls import reverse
 
-from .models import Book
 from .forms import BookForm, UserRegisterForm
+from .models import Book
 
 pytestmark = pytest.mark.django_db
 

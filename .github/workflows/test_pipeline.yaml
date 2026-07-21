@@ -40,34 +40,31 @@ jobs:
       with:
         python-version: '3.11'
 
-    - name: check directory
-      run: ls
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        cd Book_Library_System/
+        pip install -r requirement.txt
 
-    # # - name: Install Dependencies
-    # #   run: |
-    # #     python -m pip install --upgrade pip
-    # #     cd Book_Library_System/
-    # #     pip install -r requirement.txt
-
-    # - name: Run migrations
-    #   env:
-    #     SECRET_KEY: "!0cf8lw9)uzf&@ofel^vf2k*2q5w1&p3w8h21w=h6rd357a$w@"
-    #     DEBUG: "TRUE"
-    #     ALLOWED_HOSTS: "localhost,127.0.0.1"
+    - name: Run migrations
+      env:
+        SECRET_KEY: "!0cf8lw9)uzf&@ofel^vf2k*2q5w1&p3w8h21w=h6rd357a$w@"
+        DEBUG: "TRUE"
+        ALLOWED_HOSTS: "localhost,127.0.0.1"
   
-    #     DB_NAME: test_db
-    #     DB_USER: postgres
-    #     DB_PASSWORD: postgres
-    #     DB_HOST: localhost
-    #     DB_PORT: 5432
+        DB_NAME: test_db
+        DB_USER: postgres
+        DB_PASSWORD: postgres
+        DB_HOST: localhost
+        DB_PORT: 5432
 
-    #   run: |
-    #     cd Book_Library_System/library/    
-    #     python manage.py migrate
+      run: |
+        cd Book_Library_System/library/    
+        python manage.py migrate
 
-    # - name: Run Tests
-    #   run: |
-    #     cd Book_Library_System/library/
-    #     pytest
+    - name: Run Tests
+      run: |
+        cd Book_Library_System/library/
+        pytest
 
     

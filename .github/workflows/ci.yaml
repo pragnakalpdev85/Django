@@ -93,7 +93,6 @@ jobs:
         cd Book_Library_System/library/
         pytest
 
-  name: Security Pipeline
 
   security:
     runs-on: ubuntu-latest

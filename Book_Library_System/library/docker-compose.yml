@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15
+    ports:
+      - "${DB_PORT}:5432"
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+  
+  web:
+    build: .
+    command: >
+      sh -c "python manage.py migrate --noinput &&
+             gunicorn --bind 0.0.0.0:8000 --workers 3 library.wsgi:application --access-logfile - --error-logfile -"
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+    env_file:
+      - .env
+    environment:
+      - DB_HOST=db
+      - ENVIRONMENT=development
+
+  nginx:
+    build: ./nginx
+    volumes:
+      - nginx_logs:/var/log/nginx
+    ports:
+      - "8081:80"
+    depends_on:
+      - web
+    restart: always
+
+volumes:
+  postgres_data:
+  nginx_logs:

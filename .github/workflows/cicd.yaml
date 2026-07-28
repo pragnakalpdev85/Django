@@ -32,7 +32,6 @@ jobs:
       - name: Installing dependencies
         run: |
           python -m pip install --upgrade pip
-          cd Book_Library_System/library
           pip install -r requirements.txt
           pip install pylint
       
@@ -71,7 +70,6 @@ jobs:
     - name: Installing dependencies
       run: |
         python -m pip install --upgrade pip
-        cd Book_Library_System/library
         pip install -r requirements.txt
 
     - name: Run migrations
@@ -113,7 +111,6 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          cd Book_Library_System/library/
           pip install -r requirements.txt
           pip install bandit pip-audit
 
@@ -168,7 +165,7 @@ jobs:
       uses: docker/build-push-action@v5
       with:
         context: .
-        file: ./Book_Library_System/library/Dockerfile
+        file: ./Dockerfile
         push: true
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}

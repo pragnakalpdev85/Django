@@ -1,4 +1,5 @@
 # Apply migrations
+cd Book_Library_System/library
 python manage.py migrate --noinput 
 
 # start the gunicorn worker processws at the defined port

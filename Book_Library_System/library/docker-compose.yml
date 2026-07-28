@@ -4,7 +4,7 @@ services:
   db:
     image: postgres:15
     ports:
-      - "${DB_PORT}:5432"
+      - "5432"
     environment:
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USER}
@@ -28,16 +28,6 @@ services:
     environment:
       - DB_HOST=db
       - ENVIRONMENT=development
-
-  nginx:
-    build: ./nginx
-    volumes:
-      - nginx_logs:/var/log/nginx
-    ports:
-      - "8081:80"
-    depends_on:
-      - web
-    restart: always
 
 volumes:
   postgres_data:

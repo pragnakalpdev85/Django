@@ -1,7 +1,7 @@
 # Dockerfile
 FROM python:3.11-slim
 
-WORKDIR /Book_Library_System/library
+WORKDIR /app
 
 # Install dependencies
 COPY Book_Library_System/library/requirements.txt .
@@ -11,4 +11,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Run migrations and start server
-ENTRYPOINT ["sh", "Book_Library_System/library/commands.sh"]
+ENTRYPOINT ["sh", "commands.sh"]

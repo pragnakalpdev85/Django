@@ -1,7 +1,7 @@
 # Dockerfile
 FROM python:3.11-slim
 
-WORKDIR /app
+WORKDIR /Book_Library_System/library
 
 # Install dependencies
 COPY Book_Library_System/library/requirements.txt .

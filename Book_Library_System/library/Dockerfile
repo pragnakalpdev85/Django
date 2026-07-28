@@ -4,7 +4,7 @@ FROM python:3.11-slim
 WORKDIR /app
 
 # Install dependencies
-COPY ./Book_library_System/library/requirements.txt .
+COPY Book_Library_System/library/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy project

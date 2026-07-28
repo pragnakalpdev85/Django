@@ -11,4 +11,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Run migrations and start server
-ENTRYPOINT ["sh", "commands.sh"]
+ENTRYPOINT ["sh", "Book_Library_System/library/commands.sh"]

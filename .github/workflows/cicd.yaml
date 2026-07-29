@@ -193,6 +193,6 @@ jobs:
         key: ${{ secrets.SERVER_SSH_KEY }}
         port: ${{ secrets.SERVER_PORT }}
         script: |
-          cd /home/ubuntu/dev85/book_library_system
+          cd /home/${{ secrets.SERVER_USER }}/dev85/book_library_system
           docker compose pull
           sudo systemctl restart library_system.service

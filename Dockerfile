@@ -10,5 +10,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy project
 COPY . .
 
+RUN chmod +x /app/commands.sh
 # Run migrations and start server
-ENTRYPOINT ["sh", "/app/commands.sh"]
+ENTRYPOINT ["/app/commands.sh"]
